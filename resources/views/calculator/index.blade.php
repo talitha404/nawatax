@@ -10,7 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Vite Assets (Tailwind & Alpine.js terhubung dari app.css & app.js) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-blue-500 selection:text-white">
@@ -70,7 +69,7 @@
                                     </div>
                                     <div>
                                         <h2 class="text-base font-bold text-slate-800">Transaksi & Skema Transaksi</h2>
-                                        <p class="text-xs text-slate-500">Nilai *freight* dan metode penagihan agen</p>
+                                        <p class="text-xs text-slate-500">Nilai <strong>freight</strong> dan metode penagihan agen</p>
                                     </div>
                                 </div>
 
@@ -333,7 +332,7 @@
                         <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">1</div>
                         <div>
                             <h3 class="text-sm font-bold text-slate-800">Tentukan Nilai Freight</h3>
-                            <p class="mt-1 text-xs text-slate-600 leading-relaxed">Masukkan *freight dasar* milik pemilik kapal (*Shipowner*) dan nilai jual yang kamu tawarkan ke pengirim barang (*Shipper*).</p>
+                            <p class="mt-1 text-xs text-slate-600 leading-relaxed">Masukkan <strong>freight dasar</strong> milik pemilik kapal (<strong>Shipowner</strong>) dan nilai jual yang kamu tawarkan ke pengirim barang (<strong>Shipper</strong>).</p>
                         </div>
                     </div>
 
@@ -341,7 +340,7 @@
                         <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
                         <div>
                             <h3 class="text-sm font-bold text-slate-800">Atur Profil Pajak & Status PKP</h3>
-                            <p class="mt-1 text-xs text-slate-600 leading-relaxed">Pilih legalitas kapal (*SIUPAL, Non-SIUPAL, BUT*) serta status Pengusaha Kena Pajak (PKP) dari masing-masing pihak.</p>
+                            <p class="mt-1 text-xs text-slate-600 leading-relaxed">Pilih legalitas kapal (<strong>SIUPAL</strong>, <strong>Non-SIUPAL</strong>, <strong>BUT</strong>) serta status Pengusaha Kena Pajak (PKP) dari masing-masing pihak.</p>
                         </div>
                     </div>
 
@@ -357,7 +356,7 @@
                         <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">4</div>
                         <div>
                             <h3 class="text-sm font-bold text-slate-800">Analisis Hasil & Unduh PDF</h3>
-                            <p class="mt-1 text-xs text-slate-600 leading-relaxed">Sistem akan secara langsung memperbarui ringkasan *Net Profit After Tax* dan rincian setoran PPN untuk kamu cetak.</p>
+                            <p class="mt-1 text-xs text-slate-600 leading-relaxed">Sistem akan secara langsung memperbarui ringkasan <strong>Net Profit After Tax</strong> dan rincian setoran PPN untuk kamu cetak.</p>
                         </div>
                     </div>
                 </div>
@@ -380,7 +379,7 @@
                             <svg :class="{'rotate-180': activeFaq === 1}" class="w-4 h-4 text-slate-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div x-show="activeFaq === 1" x-transition class="p-4 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/50">
-                            Dalam skema *undisclosed principal*, agen menagih nilai *freight* secara penuh (*gross*) kepada Shipper atas nama agen sendiri. Shipper akan memotong PPh (misal PPh 15) dari total nilai tagihan. Agen kemudian meneruskan pokok *freight* beserta bukti potong PPh porsi *Shipowner* kepada pemilik kapal.
+                            Dalam skema <strong>undisclosed principal</strong>, agen menagih nilai <strong>freight</strong> secara penuh (<strong>gross</strong>) kepada Shipper atas nama agen sendiri. Shipper akan memotong PPh (misal PPh 15) dari total nilai tagihan. Agen kemudian meneruskan pokok <strong>freight</strong> beserta bukti potong PPh porsi <strong>Shipowner</strong> kepada pemilik kapal.
                         </div>
                     </div>
 
