@@ -1,67 +1,108 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
+```markdown
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <h1 align="center">NawaTax</h1>
+  <p align="center">
+    <strong>Kalkulator Keuntungan & Pajak Terintegrasi untuk Industri Shipbroker Indonesia</strong>
+  </p>
 </p>
 
-## About NawaTax
+<p align="center">
+  <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Status Build"></a>
+  <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Unduhan"></a>
+  <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Versi Stabil Terbaru"></a>
+  <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="Lisensi"></a>
+</p>
 
-NawaTax is a web-based **Shipbroker Profit & Tax Calculator** designed to provide accurate and real-time calculations for the shipbroking industry. Built with Laravel, Blade, and Alpine.js, this application helps shipbrokers precisely determine:
+---
 
--   **Brokerage fees**
--   **Transaction taxes** (PPh 23, PPh 15, PPh 26) based on vessel status
--   **VAT (PPN)**
--   **Commission splits** (including sub-broker taxation mechanisms)
--   **Operational costs**
--   **Final tax implications**
--   **Net profit**
+## 📌 Tentang NawaTax
 
-### Key Features:
+**NawaTax** adalah aplikasi web *Shipbroker Profit & Tax Calculator* yang dirancang khusus untuk memecahkan kompleksitas perhitungan finansial dan perpajakan pada transaksi perkapalan (*shipbroking*) di Indonesia. Built di atas stack modern **Laravel**, **Blade**, dan **Alpine.js**, NawaTax memberikan kepastian angka secara real-time dan presisi tinggi.
 
--   **Comprehensive Calculator**: Input transaction values, tax profiles, and commission split schemes to get a detailed cash flow summary, tax breakdown, and profitability report.
--   **Dynamic Tax Handling**: Supports various Indonesian tax regulations (PPh 15 for National Shipping, PPh 23 for non-SIUPAL, PPh 15 WPLN for Foreign Shipping with BUT, PPh 26 for Non-Resident) and PPN calculations based on PKP status.
--   **Inter-Broker Split Management**: Accurately calculates and reports commission splits with sub-brokers, including tax deductions (PPh 23 for entities, PPh 21 for individuals) without burdening the main broker.
--   **Real-time Results**: All calculations are performed instantly as users adjust parameters, providing immediate insights.
--   **Document Generator**: Export detailed calculation results into clean, professional PDF reports for record-keeping or client presentation.
--   **Guest-Friendly**: No login is required, ensuring quick and easy access for all users.
+### 🌟 Nilai Unik Produk (Value Proposition)
+Perhitungan pajak *freight* dan *charter* kapal di Indonesia memiliki aturan perpajakan yang sangat spesifik tergantung pada status bendera kapal, entitas pemilik, dan skema keagenan. NawaTax mengeliminasi kebingungan manual dan risiko kesalahan perhitungan dengan otomatisasi aturan perpajakan yang sesuai regulasi (*tax compliance*), sekaligus memperhitungkan skema *commission split* antar-broker secara akurat.
 
-NawaTax aims to simplify complex shipbroking financial calculations, offering transparency and accuracy in profit and tax reporting.
+---
 
-## Learning Laravel
+## 🎯 Tujuan Utama
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+NawaTax bertujuan untuk memberikan transparansi finansial dan kemudahan kalkulasi bagi para *shipbroker*, pemilik kapal, dan praktisi keuangan maritim dalam menentukan:
+1. **Brokerage Fees** & Komisi bersih.
+2. **Implikasi Pajak Transaksi** (PPh 15, PPh 23, PPh 26) berdasarkan status kapal dan regulasi berjalan.
+3. **Pajak Pertambahan Nilai (PPN)** sesuai status Pengusaha Kena Pajak (PKP).
+4. **Mekanisme Pajak Sub-Broker** tanpa membebani broker utama.
+5. **Biaya Operasional & Estimasi Keuntungan Bersih (Net Profit)**.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## 🚀 Fitur Pembeda & Keunggulan Utama
 
-## Agentic Development
+- 🧮 **Comprehensive Financial Calculator**  
+  Cukup masukkan nilai transaksi, profil perpajakan, dan skema pembagian komisi untuk mendapatkan ringkasan *cash flow*, rincian pajak, dan laporan profitabilitas secara menyeluruh.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- ⚖️ **Dynamic Indonesian Tax Regulations Handling**  
+  Mendukung berbagai skenario pajak perkapalan Indonesia secara otomatis:
+  - **PPh 15** (Pelayaran Nasional / SIUPAL)
+  - **PPh 23** (Jasa Perantara / non-SIUPAL)
+  - **PPh 15 WPLN** (Pelayaran Asing dengan BUT)
+  - **PPh 26** (Wajib Pajak Luar Negeri / Non-Resident)
+  - Perhitungan **PPN** kontekstual berbasis status PKP.
 
-```bash
-composer require laravel/boost --dev
+- 🤝 **Inter-Broker Split Management**  
+  Atur pembagian komisi dengan sub-broker/mitra secara akurat. Sistem menghitung pemotongan pajak terkait (**PPh 23** untuk entitas badan, **PPh 21** untuk perorangan) secara otomatis sehingga pemotongan pajak sub-broker terisolasi dan tidak membebani komisi broker utama.
 
-php artisan boost:install
+- ⚡ **Real-Time Interactive Results**  
+  Didukung oleh **Alpine.js**, seluruh hasil perhitungan, *breakdown* pajak, dan *net profit* diperbarui secara instan saat parameter diubah tanpa perlunya *page reload*.
+
+- 📄 **Professional Document Generator**  
+  Ekspor hasil kalkulasi ke dalam format ringkasan PDF yang rapi dan profesional, siap digunakan untuk arsip internal maupun presentasi langsung ke klien.
+
+- 🔓 **Guest-Friendly Access**  
+  Dapat digunakan langsung tanpa perlu proses *login/authentication*, memberikan akses cepat bagi developer maupun pengguna akhir yang membutuhkan kalkulasi instan.
+
+---
+
+## 🛠️ Stack Teknologi
+
+Aplikasi ini dibangun menggunakan *tech stack* Laravel yang ringkas dan performan:
+- **Backend**: PHP 8.x, [Laravel Framework](https://laravel.com)
+- **Frontend**: Blade Templating, [Alpine.js](https://alpinejs.dev) (Reaktivitas UI)
+- **CSS Framework**: Tailwind CSS
+- **PDF Engine**: PDF Generation Library (Laravel-compatible)
+
+---
+
+## 💻 Panduan Instalasi Lokal (Developer Quickstart)
+
+Untuk menjalankan proyek NawaTax di lingkungan lokal Anda:
+
+1. **Cloning Repository**
+   ```bash
+   git clone [https://github.com/username/nawatax.git](https://github.com/username/nawatax.git)
+   cd nawatax
+
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+2. **Instalasi Dependensi PHP & JavaScript**
+```bash
+composer install
+npm install && npm run dev
 
-## Contributing
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
+3. **Konfigurasi Environment**
+```bash
+cp .env.example .env
+php artisan key:generate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+4. **Jalankan Development Server**
+```bash
+php artisan serve
 
-## License
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Aplikasi dapat diakses melalui `http://localhost:8000`.
