@@ -7,19 +7,28 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+## About NawaTax
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+NawaTax is a web-based **Shipbroker Profit & Tax Calculator** designed to provide accurate and real-time calculations for the shipbroking industry. Built with Laravel, Blade, and Alpine.js, this application helps shipbrokers precisely determine:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-   **Brokerage fees**
+-   **Transaction taxes** (PPh 23, PPh 15, PPh 26) based on vessel status
+-   **VAT (PPN)**
+-   **Commission splits** (including sub-broker taxation mechanisms)
+-   **Operational costs**
+-   **Final tax implications**
+-   **Net profit**
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Key Features:
+
+-   **Comprehensive Calculator**: Input transaction values, tax profiles, and commission split schemes to get a detailed cash flow summary, tax breakdown, and profitability report.
+-   **Dynamic Tax Handling**: Supports various Indonesian tax regulations (PPh 15 for National Shipping, PPh 23 for non-SIUPAL, PPh 15 WPLN for Foreign Shipping with BUT, PPh 26 for Non-Resident) and PPN calculations based on PKP status.
+-   **Inter-Broker Split Management**: Accurately calculates and reports commission splits with sub-brokers, including tax deductions (PPh 23 for entities, PPh 21 for individuals) without burdening the main broker.
+-   **Real-time Results**: All calculations are performed instantly as users adjust parameters, providing immediate insights.
+-   **Document Generator**: Export detailed calculation results into clean, professional PDF reports for record-keeping or client presentation.
+-   **Guest-Friendly**: No login is required, ensuring quick and easy access for all users.
+
+NawaTax aims to simplify complex shipbroking financial calculations, offering transparency and accuracy in profit and tax reporting.
 
 ## Learning Laravel
 

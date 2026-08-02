@@ -37,7 +37,7 @@
         <!-- 2. Hero Section dengan Gradient Biru -->
         <section class="bg-gradient-to-br from-blue-700 via-indigo-800 to-slate-900 text-white py-12 md:py-16 px-4 sm:px-6 lg:px-8 shadow-inner">
             <div class="max-w-7xl mx-auto text-center">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-200 border border-blue-400/30 mb-4 backdrop-blur-sm">
+                <span class="font-semibold">
                     Shipbroker Financial Tool
                 </span>
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
