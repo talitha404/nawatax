@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>NawaTax — Shipbroker Profit & Tax Calculator</title>
 
     <!-- Google Fonts: Inter -->
@@ -58,7 +59,7 @@
 
                     <!-- KOLOM KIRI: Form Input (lg:col-span-7) -->
                     <div class="lg:col-span-7 space-y-6">
-                        <form id="calculator-form" method="POST" action="#" class="space-y-6">
+                        <form id="calculator-form" method="POST" action="{{ route('calculator.calculate') }}" class="space-y-6">
                             @csrf
 
                             <!-- CARD 1: Skema Transaksi & Nilai Freight -->
@@ -80,8 +81,7 @@
                                             Skema Keagenan
                                         </label>
                                         <select id="transaction_scheme" name="transaction_scheme" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                            <option value="undisclosed" selected>Undisclosed Principal (Freight Gross & Tax Pass-Through)</option>
-                                            <option value="pure_brokerage">Pure Brokerage / Direct Agency (Hanya Komisi Agen)</option>
+                                            <option value="undisclosed" @selected(old('transaction_scheme', 'undisclosed') === 'undisclosed')>Undisclosed Principal (Freight Gross & Tax Pass-Through)</option>
                                         </select>
                                     </div>
 
@@ -93,8 +93,9 @@
                                             </label>
                                             <div class="relative">
                                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
-                                                <input type="text" id="freight_owner" name="freight_owner" class="w-full pl-9 pr-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="100.000.000">
+                                                <input type="text" id="freight_owner" name="freight_owner" value="{{ old('freight_owner') }}" class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_owner') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="100000000">
                                             </div>
+                                            @error('freight_owner') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                         </div>
 
                                         <div>
@@ -103,8 +104,9 @@
                                             </label>
                                             <div class="relative">
                                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
-                                                <input type="text" id="freight_shipper" name="freight_shipper" class="w-full pl-9 pr-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="110.000.000">
+                                                <input type="text" id="freight_shipper" name="freight_shipper" value="{{ old('freight_shipper') }}" class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_shipper') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="110000000">
                                             </div>
+                                            @error('freight_shipper') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                         </div>
                                     </div>
 
@@ -115,8 +117,9 @@
                                         </label>
                                         <div class="relative">
                                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
-                                            <input type="text" id="reimbursable_costs" name="reimbursable_costs" class="w-full pl-9 pr-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="0">
+                                            <input type="text" id="reimbursable_costs" name="reimbursable_costs" value="{{ old('reimbursable_costs') }}" class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('reimbursable_costs') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="0">
                                         </div>
+                                        @error('reimbursable_costs') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                     </div>
                                 </div>
                             </div>
@@ -140,11 +143,12 @@
                                             Status Legalitas Shipowner
                                         </label>
                                         <select id="shipowner_status" name="shipowner_status" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                            <option value="siupal" selected>Pelayaran Nasional (Pemilik SIUPAL) — PPh 15 (1.2% Final)</option>
-                                            <option value="non_siupal">Sewa Harta / Non-SIUPAL — PPh 23 (2.0%)</option>
-                                            <option value="foreign_but">Pelayaran Asing dengan BUT — PPh 15 WPLN (2.64% Final)</option>
-                                            <option value="foreign_non_but">Pelayaran Asing Tanpa BUT — PPh 26 (20% / Treaty)</option>
+                                            <option value="siupal" @selected(old('shipowner_status', 'siupal') === 'siupal')>Pelayaran Nasional (Pemilik SIUPAL) — PPh 15 (1.2% Final)</option>
+                                            <option value="sewa_harta" @selected(old('shipowner_status') === 'sewa_harta')>Sewa Harta / Non-SIUPAL — PPh 23 (2.0%)</option>
+                                            <option value="asing_but" @selected(old('shipowner_status') === 'asing_but')>Pelayaran Asing dengan BUT — PPh 15 WPLN (2.64% Final)</option>
+                                            <option value="asing_non_but" @selected(old('shipowner_status') === 'asing_non_but')>Pelayaran Asing Tanpa BUT — PPh 26 (20% / Treaty)</option>
                                         </select>
+                                        @error('shipowner_status') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                     </div>
 
                                     <!-- Grid Toggle Status PKP -->
@@ -156,19 +160,19 @@
                                             <!-- PKP Agen -->
                                             <label class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100/80 transition-colors">
                                                 <span class="text-xs font-semibold text-slate-700">PKP Agen</span>
-                                                <input type="checkbox" id="pkp_agen" name="pkp_agen" value="1" checked class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                                                <input type="checkbox" id="pkp_agen" name="pkp_agen" value="1" @checked(old('pkp_agen', true)) class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
                                             </label>
 
                                             <!-- PKP Shipowner -->
                                             <label class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100/80 transition-colors">
                                                 <span class="text-xs font-semibold text-slate-700">PKP Shipowner</span>
-                                                <input type="checkbox" id="pkp_shipowner" name="pkp_shipowner" value="1" checked class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                                                <input type="checkbox" id="pkp_shipowner" name="pkp_shipowner" value="1" @checked(old('pkp_shipowner', true)) class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
                                             </label>
 
                                             <!-- PKP Shipper -->
                                             <label class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100/80 transition-colors">
                                                 <span class="text-xs font-semibold text-slate-700">PKP Shipper</span>
-                                                <input type="checkbox" id="pkp_shipper" name="pkp_shipper" value="1" checked class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                                                <input type="checkbox" id="pkp_shipper" name="pkp_shipper" value="1" @checked(old('pkp_shipper', true)) class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
                                             </label>
                                         </div>
                                     </div>
@@ -176,7 +180,7 @@
                             </div>
 
                             <!-- CARD 3: Skema Split Sub-Broker (Managed by Alpine.js UI State) -->
-                            <div x-data="{ isSplitActive: false }" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 transition-all hover:shadow-md">
+                            <div x-data="{ isSplitActive: @js((bool) old('subbroker_split_active', false)) }" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 transition-all hover:shadow-md">
                                 <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
                                     <div class="flex items-center space-x-3">
                                         <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
@@ -189,7 +193,7 @@
                                     </div>
                                     <!-- Toggle Switch Active -->
                                     <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" x-model="isSplitActive" name="subbroker_split_active" class="sr-only peer">
+                                        <input type="checkbox" x-model="isSplitActive" name="subbroker_split_active" value="1" @checked(old('subbroker_split_active')) class="sr-only peer">
                                         <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                                     </label>
                                 </div>
@@ -200,32 +204,53 @@
                                         <div>
                                             <label for="split_type" class="block text-xs font-semibold text-slate-700 mb-1">Tipe Split</label>
                                             <select id="split_type" name="split_type" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
-                                                <option value="percentage">Persentase (%)</option>
-                                                <option value="fixed">Nominal Fixed (IDR)</option>
+                                                <option value="percentage" @selected(old('split_type', 'percentage') === 'percentage')>Persentase (%)</option>
+                                                <option value="fixed" @selected(old('split_type') === 'fixed')>Nominal Fixed (IDR)</option>
                                             </select>
+                                            @error('split_type') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                         </div>
                                         <div>
                                             <label for="split_value" class="block text-xs font-semibold text-slate-700 mb-1">Nilai Split</label>
-                                            <input type="text" id="split_value" name="split_value" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500 placeholder-slate-300 transition-all" placeholder="40">
+                                            <input type="text" id="split_value" name="split_value" value="{{ old('split_value') }}" class="w-full px-3.5 py-2.5 bg-white border @error('split_value') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500 placeholder-slate-300 transition-all" placeholder="40">
+                                            @error('split_value') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                         </div>
                                     </div>
 
                                     <div>
                                         <label for="sub_broker_entity" class="block text-xs font-semibold text-slate-700 mb-1">Status Legalitas Sub-Broker</label>
                                         <select id="sub_broker_entity" name="sub_broker_entity" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
-                                            <option value="corporate">Badan Usaha (PT/CV) — Potong PPh 23 (2%)</option>
-                                            <option value="individual">Perorangan / Individu — Potong PPh 21</option>
+                                            <option value="corporate" @selected(old('sub_broker_entity', 'corporate') === 'corporate')>Badan Usaha (PT/CV) — Potong PPh 23 (2%)</option>
+                                            <option value="individual" @selected(old('sub_broker_entity') === 'individual')>Perorangan / Individu — Potong PPh 21</option>
                                         </select>
+                                        @error('sub_broker_entity') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                     </div>
                                 </div>
                             </div>
+
+                            <button type="submit" class="w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                Hitung Profit
+                            </button>
                         </form>
                     </div>
 
 
                     <!-- KOLOM KANAN: Live Result Panel / Sticky Dashboard (lg:col-span-5) -->
                     <div class="lg:col-span-5 lg:sticky lg:top-20 space-y-4">
-                        
+                        @if (isset($result))
+                        @php
+                            $pdfPayload = [
+                                'input_summary' => $result['input'],
+                                'calculation_result' => [
+                                    'freight' => $result['freight'],
+                                    'cash_flow' => $result['cash_flow'],
+                                    'profitability' => $result['profitability'],
+                                ],
+                                'breakdown_detail' => [
+                                    'taxes' => $result['taxes'],
+                                    'sub_broker_split' => $result['sub_broker_split'],
+                                ],
+                            ];
+                        @endphp
                         <!-- MAIN HERO RESULT CARD -->
                         <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-blue-950 rounded-2xl p-6 text-white shadow-xl border border-slate-800 relative overflow-hidden">
                             <!-- Background Decorator -->
@@ -238,7 +263,7 @@
 
                                 <p class="text-xs text-slate-400">Keuntungan Bersih (Net Profit):</p>
                                 <div class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight my-1">
-                                    Rp 9.880.000
+                                    Rp {{ number_format($result['profitability']['net_profit'], 0, ',', '.') }}
                                 </div>
                                 <p class="text-[11px] text-blue-300/70 mt-1">
                                     *Sudah dipotong PPh Final & memperhitungkan selisih PPN.
@@ -258,19 +283,43 @@
                                 <div class="space-y-2 text-xs">
                                     <div class="flex justify-between items-center">
                                         <span class="text-slate-600">(+) Kas Masuk dari Shipper</span>
-                                        <span class="font-semibold text-slate-800">Rp 120.780.000</span>
+                                        <span class="font-semibold text-slate-800">Rp {{ number_format($result['cash_flow']['cash_in_from_shipper'], 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-slate-600">(-) Biaya Operasional</span>
+                                        <span class="font-semibold text-slate-800">Rp {{ number_format($result['cash_flow']['operational_cash_out'], 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-slate-600">(-) Kas Keluar ke Shipowner</span>
-                                        <span class="font-semibold text-slate-800">Rp 109.800.000</span>
+                                        <span class="font-semibold text-slate-800">Rp {{ number_format($result['cash_flow']['cash_out_to_shipowner'], 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-slate-600">(-) Setoran PPN ke Kas Negara</span>
-                                        <span class="font-semibold text-slate-800">Rp 1.100.000</span>
+                                        <span class="font-semibold text-slate-800">Rp {{ number_format($result['cash_flow']['vat_payable_to_state'], 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex justify-between items-center pt-2 border-t border-slate-100 font-bold text-sm text-slate-900">
                                         <span>Sisa Uang di Rekening</span>
-                                        <span class="text-blue-600">Rp 9.880.000</span>
+                                        <span class="text-blue-600">Rp {{ number_format($result['cash_flow']['net_cash_received_broker'], 0, ',', '.') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="border-slate-100">
+
+                            <div>
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">B. Nilai Bruto</h3>
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-slate-600">Freight Shipowner</span>
+                                        <span class="font-medium text-slate-800">Rp {{ number_format($result['freight']['owner_amount'], 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-slate-600">Freight Shipper</span>
+                                        <span class="font-medium text-slate-800">Rp {{ number_format($result['freight']['shipper_amount'], 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-slate-600">Komisi Bruto Broker</span>
+                                        <span class="font-medium text-slate-800">Rp {{ number_format($result['profitability']['gross_commission'], 0, ',', '.') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -284,34 +333,41 @@
                                 </h3>
                                 <div class="space-y-2 text-xs">
                                     <div class="flex justify-between items-center">
-                                        <span class="text-slate-600">PPh Dipotong Shipper (1.2%)</span>
-                                        <span class="font-medium text-slate-800">Rp 1.320.000</span>
+                                        <span class="text-slate-600">{{ $result['taxes']['agent_withholding']['type'] }} Dipotong Shipper</span>
+                                        <span class="font-medium text-slate-800">Rp {{ number_format($result['taxes']['agent_withholding']['amount'], 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-slate-600">PPh Diteruskan ke Owner</span>
-                                        <span class="font-medium text-slate-800">Rp 1.200.000</span>
+                                        <span class="text-slate-600">{{ $result['taxes']['shipowner_withholding']['type'] }} Diteruskan ke Owner</span>
+                                        <span class="font-medium text-slate-800">Rp {{ number_format($result['taxes']['shipowner_withholding']['amount'], 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-slate-600">PPN Keluaran (11%)</span>
-                                        <span class="font-medium text-slate-800">Rp 12.100.000</span>
+                                        <span class="text-slate-600">PPN Keluaran</span>
+                                        <span class="font-medium text-slate-800">Rp {{ number_format($result['taxes']['vat']['output_vat'], 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-slate-600">PPN Masukan (11%)</span>
-                                        <span class="font-medium text-slate-800">Rp 11.000.000</span>
+                                        <span class="text-slate-600">PPN Masukan</span>
+                                        <span class="font-medium text-slate-800">Rp {{ number_format($result['taxes']['vat']['input_vat'], 0, ',', '.') }}</span>
                                     </div>
+                                    @if ($result['sub_broker_split']['active'])
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-slate-600">{{ $result['taxes']['sub_broker_withholding']['type'] }} Sub-Broker</span>
+                                            <span class="font-medium text-slate-800">Rp {{ number_format($result['taxes']['sub_broker_withholding']['amount'], 0, ',', '.') }}</span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
 
                             <!-- PDF Export Button -->
                             <div class="pt-2">
-                                <button type="button" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 active:scale-[0.99] transition-all flex items-center justify-center space-x-2">
+                                <button type="button" x-data="{ loading: false }" @click="loading = true; exportPdf(@js($pdfPayload)).catch(error => alert(error.message)).finally(() => loading = false)" :disabled="loading" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:cursor-wait disabled:opacity-70 text-white font-semibold text-sm rounded-xl shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 active:scale-[0.99] transition-all flex items-center justify-center space-x-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
-                                    <span>Download Laporan PDF</span>
+                                    <span x-text="loading ? 'Menyiapkan PDF...' : 'Download Laporan PDF'"></span>
                                 </button>
                             </div>
                         </div>
+                        @endif
 
                     </div>
 
