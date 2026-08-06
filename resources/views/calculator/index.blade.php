@@ -1,3 +1,26 @@
+@php
+    // Keep the dashboard visible before the first calculation and reuse the
+    // latest submitted values when the calculator view is rendered again.
+    $result = $result ?? [
+        'input' => [
+            'transaction_scheme' => 'undisclosed', 'freight_owner' => '', 'freight_shipper' => '',
+            'reimbursable_costs' => '', 'shipowner_status' => 'siupal',
+            'pkp_agen' => true, 'pkp_shipowner' => true, 'pkp_shipper' => true,
+            'subbroker_split_active' => false, 'split_type' => 'percentage',
+            'split_value' => '', 'sub_broker_entity' => 'corporate',
+        ],
+        'freight' => ['owner_amount' => 0, 'shipper_amount' => 0],
+        'cash_flow' => ['cash_in_from_shipper' => 0, 'operational_cash_out' => 0, 'cash_out_to_shipowner' => 0, 'vat_payable_to_state' => 0, 'net_cash_received_broker' => 0],
+        'profitability' => ['net_profit' => 0, 'gross_commission' => 0],
+        'taxes' => [
+            'agent_withholding' => ['type' => 'PPh', 'amount' => 0],
+            'shipowner_withholding' => ['type' => 'PPh', 'amount' => 0],
+            'vat' => ['output_vat' => 0, 'input_vat' => 0],
+            'sub_broker_withholding' => ['type' => 'PPh', 'amount' => 0],
+        ],
+        'sub_broker_split' => ['active' => false],
+    ];
+@endphp
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 <head>
@@ -59,7 +82,23 @@
 
                     <!-- KOLOM KIRI: Form Input (lg:col-span-7) -->
                     <div class="lg:col-span-7 space-y-6">
-                        <form id="calculator-form" method="POST" action="{{ route('calculator.calculate') }}" class="space-y-6">
+                        <form id="calculator-form" method="POST" action="{{ route('calculator.calculate') }}" class="space-y-6"
+                            x-data="{
+                                amounts: {
+                                    freight_owner: @js(old('freight_owner', $result['input']['freight_owner'])),
+                                    freight_shipper: @js(old('freight_shipper', $result['input']['freight_shipper'])),
+                                    reimbursable_costs: @js(old('reimbursable_costs', $result['input']['reimbursable_costs'])),
+                                    split_value: @js(old('split_value', $result['input']['split_value'])),
+                                },
+                                formatAmount(value) {
+                                    const raw = String(value ?? '').replace(/\D/g, '');
+                                    return raw ? new Intl.NumberFormat('id-ID').format(Number(raw)) : '';
+                                },
+                                updateAmount(field, event) {
+                                    this.amounts[field] = event.target.value.replace(/\D/g, '');
+                                    event.target.value = this.formatAmount(this.amounts[field]);
+                                },
+                            }">
                             @csrf
 
                             <!-- CARD 1: Skema Transaksi & Nilai Freight -->
@@ -81,7 +120,7 @@
                                             Skema Keagenan
                                         </label>
                                         <select id="transaction_scheme" name="transaction_scheme" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                            <option value="undisclosed" @selected(old('transaction_scheme', 'undisclosed') === 'undisclosed')>Undisclosed Principal (Freight Gross & Tax Pass-Through)</option>
+                                            <option value="undisclosed" @selected(old('transaction_scheme', $result['input']['transaction_scheme']) === 'undisclosed')>Undisclosed Principal (Freight Gross & Tax Pass-Through)</option>
                                         </select>
                                     </div>
 
@@ -93,7 +132,8 @@
                                             </label>
                                             <div class="relative">
                                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
-                                                <input type="text" id="freight_owner" name="freight_owner" value="{{ old('freight_owner') }}" class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_owner') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="100000000">
+                                                <input type="hidden" name="freight_owner" :value="amounts.freight_owner">
+                                                <input type="text" id="freight_owner" inputmode="numeric" :value="formatAmount(amounts.freight_owner)" @input="updateAmount('freight_owner', $event)" class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_owner') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="100000000">
                                             </div>
                                             @error('freight_owner') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                         </div>
@@ -104,7 +144,8 @@
                                             </label>
                                             <div class="relative">
                                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
-                                                <input type="text" id="freight_shipper" name="freight_shipper" value="{{ old('freight_shipper') }}" class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_shipper') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="110000000">
+                                                <input type="hidden" name="freight_shipper" :value="amounts.freight_shipper">
+                                                <input type="text" id="freight_shipper" inputmode="numeric" :value="formatAmount(amounts.freight_shipper)" @input="updateAmount('freight_shipper', $event)" class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_shipper') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="110000000">
                                             </div>
                                             @error('freight_shipper') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                         </div>
@@ -117,7 +158,8 @@
                                         </label>
                                         <div class="relative">
                                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
-                                            <input type="text" id="reimbursable_costs" name="reimbursable_costs" value="{{ old('reimbursable_costs') }}" class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('reimbursable_costs') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="0">
+                                            <input type="hidden" name="reimbursable_costs" :value="amounts.reimbursable_costs">
+                                            <input type="text" id="reimbursable_costs" inputmode="numeric" :value="formatAmount(amounts.reimbursable_costs)" @input="updateAmount('reimbursable_costs', $event)" class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('reimbursable_costs') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="0">
                                         </div>
                                         @error('reimbursable_costs') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                     </div>
@@ -142,7 +184,7 @@
                                         <label for="shipowner_status" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
                                             Status Legalitas Shipowner
                                         </label>
-                                        <select id="shipowner_status" name="shipowner_status" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                        <select id="shipowner_status" name="shipowner_status" x-init="$el.value = @js(old('shipowner_status', $result['input']['shipowner_status']))" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                                             <option value="siupal" @selected(old('shipowner_status', 'siupal') === 'siupal')>Pelayaran Nasional (Pemilik SIUPAL) — PPh 15 (1.2% Final)</option>
                                             <option value="sewa_harta" @selected(old('shipowner_status') === 'sewa_harta')>Sewa Harta / Non-SIUPAL — PPh 23 (2.0%)</option>
                                             <option value="asing_but" @selected(old('shipowner_status') === 'asing_but')>Pelayaran Asing dengan BUT — PPh 15 WPLN (2.64% Final)</option>
@@ -160,19 +202,19 @@
                                             <!-- PKP Agen -->
                                             <label class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100/80 transition-colors">
                                                 <span class="text-xs font-semibold text-slate-700">PKP Agen</span>
-                                                <input type="checkbox" id="pkp_agen" name="pkp_agen" value="1" @checked(old('pkp_agen', true)) class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                                                <input type="checkbox" id="pkp_agen" name="pkp_agen" value="1" @checked(old('pkp_agen', $result['input']['pkp_agen'])) class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
                                             </label>
 
                                             <!-- PKP Shipowner -->
                                             <label class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100/80 transition-colors">
                                                 <span class="text-xs font-semibold text-slate-700">PKP Shipowner</span>
-                                                <input type="checkbox" id="pkp_shipowner" name="pkp_shipowner" value="1" @checked(old('pkp_shipowner', true)) class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                                                <input type="checkbox" id="pkp_shipowner" name="pkp_shipowner" value="1" @checked(old('pkp_shipowner', $result['input']['pkp_shipowner'])) class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
                                             </label>
 
                                             <!-- PKP Shipper -->
                                             <label class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100/80 transition-colors">
                                                 <span class="text-xs font-semibold text-slate-700">PKP Shipper</span>
-                                                <input type="checkbox" id="pkp_shipper" name="pkp_shipper" value="1" @checked(old('pkp_shipper', true)) class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                                                <input type="checkbox" id="pkp_shipper" name="pkp_shipper" value="1" @checked(old('pkp_shipper', $result['input']['pkp_shipper'])) class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
                                             </label>
                                         </div>
                                     </div>
@@ -180,7 +222,7 @@
                             </div>
 
                             <!-- CARD 3: Skema Split Sub-Broker (Managed by Alpine.js UI State) -->
-                            <div x-data="{ isSplitActive: @js((bool) old('subbroker_split_active', false)) }" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 transition-all hover:shadow-md">
+                            <div x-data="{ isSplitActive: @js((bool) old('subbroker_split_active', $result['input']['subbroker_split_active'])) }" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 transition-all hover:shadow-md">
                                 <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
                                     <div class="flex items-center space-x-3">
                                         <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
@@ -193,7 +235,7 @@
                                     </div>
                                     <!-- Toggle Switch Active -->
                                     <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" x-model="isSplitActive" name="subbroker_split_active" value="1" @checked(old('subbroker_split_active')) class="sr-only peer">
+                                        <input type="checkbox" x-model="isSplitActive" name="subbroker_split_active" value="1" @checked(old('subbroker_split_active', $result['input']['subbroker_split_active'])) class="sr-only peer">
                                         <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                                     </label>
                                 </div>
@@ -203,7 +245,7 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <label for="split_type" class="block text-xs font-semibold text-slate-700 mb-1">Tipe Split</label>
-                                            <select id="split_type" name="split_type" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                                            <select id="split_type" name="split_type" x-init="$el.value = @js(old('split_type', $result['input']['split_type']))" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
                                                 <option value="percentage" @selected(old('split_type', 'percentage') === 'percentage')>Persentase (%)</option>
                                                 <option value="fixed" @selected(old('split_type') === 'fixed')>Nominal Fixed (IDR)</option>
                                             </select>
@@ -211,14 +253,15 @@
                                         </div>
                                         <div>
                                             <label for="split_value" class="block text-xs font-semibold text-slate-700 mb-1">Nilai Split</label>
-                                            <input type="text" id="split_value" name="split_value" value="{{ old('split_value') }}" class="w-full px-3.5 py-2.5 bg-white border @error('split_value') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500 placeholder-slate-300 transition-all" placeholder="40">
+                                            <input type="hidden" name="split_value" :value="amounts.split_value">
+                                            <input type="text" id="split_value" inputmode="numeric" :value="formatAmount(amounts.split_value)" @input="updateAmount('split_value', $event)" class="w-full px-3.5 py-2.5 bg-white border @error('split_value') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 placeholder-slate-300 transition-all" placeholder="40">
                                             @error('split_value') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                         </div>
                                     </div>
 
                                     <div>
                                         <label for="sub_broker_entity" class="block text-xs font-semibold text-slate-700 mb-1">Status Legalitas Sub-Broker</label>
-                                        <select id="sub_broker_entity" name="sub_broker_entity" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                                        <select id="sub_broker_entity" name="sub_broker_entity" x-init="$el.value = @js(old('sub_broker_entity', $result['input']['sub_broker_entity']))" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
                                             <option value="corporate" @selected(old('sub_broker_entity', 'corporate') === 'corporate')>Badan Usaha (PT/CV) — Potong PPh 23 (2%)</option>
                                             <option value="individual" @selected(old('sub_broker_entity') === 'individual')>Perorangan / Individu — Potong PPh 21</option>
                                         </select>
@@ -236,7 +279,6 @@
 
                     <!-- KOLOM KANAN: Live Result Panel / Sticky Dashboard (lg:col-span-5) -->
                     <div class="lg:col-span-5 lg:sticky lg:top-20 space-y-4">
-                        @if (isset($result))
                         @php
                             $pdfPayload = [
                                 'input_summary' => $result['input'],
@@ -367,8 +409,6 @@
                                 </button>
                             </div>
                         </div>
-                        @endif
-
                     </div>
 
                 </div>

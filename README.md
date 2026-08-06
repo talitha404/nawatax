@@ -64,7 +64,7 @@ NawaTax membantu *shipbroker*, pemilik kapal, dan praktisi keuangan maritim dala
 
 1. **Clone Repository**
    ```bash
-   git clone https://github.com/username/nawatax.git
+   git clone https://github.com/talitha404/nawatax.git
    cd nawatax
    ```
 
