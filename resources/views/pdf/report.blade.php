@@ -42,7 +42,7 @@
     <table class="data-table">
         <tr><th>Brokerage Fee / Komisi Bruto</th><td class="amount">{{ $money($profitability['gross_commission'] ?? 0) }}</td></tr>
         <tr><th>{{ $taxes['agent_withholding']['type'] ?? 'PPh Agen' }} dipotong Shipper</th><td class="amount">{{ $money($taxes['agent_withholding']['amount'] ?? 0) }}</td></tr>
-        <tr><th>{{ $taxes['shipowner_withholding']['type'] ?? 'PPh Shipowner' }} diteruskan ke Shipowner</th><td class="amount">{{ $money($taxes['shipowner_withholding']['amount'] ?? 0) }}</td></tr>
+        <tr><th>{{ $taxes['shipowner_withholding']['type'] ?? 'PPh Shipowner' }} dipotong Agen atas Shipowner</th><td class="amount">{{ $money($taxes['shipowner_withholding']['amount'] ?? 0) }}</td></tr>
         <tr><th>PPN Output</th><td class="amount">{{ $money($vat['output_vat'] ?? 0) }}</td></tr>
         <tr><th>PPN Input</th><td class="amount">{{ $money($vat['input_vat'] ?? 0) }}</td></tr>
         <tr><th>PPN Kurang Bayar</th><td class="amount">{{ $money($vat['vat_payable'] ?? 0) }}</td></tr>

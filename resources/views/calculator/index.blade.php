@@ -379,7 +379,7 @@
                                         <span class="font-medium text-slate-800">Rp {{ number_format($result['taxes']['agent_withholding']['amount'], 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-slate-600">{{ $result['taxes']['shipowner_withholding']['type'] }} Diteruskan ke Owner</span>
+                                        <span class="text-slate-600">{{ $result['taxes']['shipowner_withholding']['type'] }} Dipotong Agen atas Shipowner</span>
                                         <span class="font-medium text-slate-800">Rp {{ number_format($result['taxes']['shipowner_withholding']['amount'], 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
