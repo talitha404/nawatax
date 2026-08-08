@@ -133,9 +133,9 @@
                                         </div>
                                     </div>
                                     <!-- Tombol Reset Nilai Freight -->
-                                    <button type="button" @click="clearFields()" class="text-xs font-semibold text-blue-600 hover:text-blue-800 underline transition-colors">
-                                        Reset Input
-                                    </button>
+                                    <a href="{{ route('calculator.index') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800 underline transition-colors">
+                                        Reset Input & Hasil
+                                    </a>
                                 </div>
 
                                 <div class="space-y-4">

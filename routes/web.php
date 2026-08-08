@@ -7,3 +7,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [CalculatorController::class, 'index'])->name('calculator.index');
 Route::post('/calculate', [CalculatorController::class, 'calculate'])->name('calculator.calculate');
 Route::post('/generate-pdf', [PdfController::class, 'generate'])->name('pdf.generate');
+// Route GET untuk menampilkan halaman kalkulator pertama kali / kondisi bersih (reset)
+Route::get('/calculator', [CalculatorController::class, 'index'])->name('calculator.index');
