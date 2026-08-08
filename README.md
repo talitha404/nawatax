@@ -85,6 +85,8 @@ NawaTax membantu *shipbroker*, pemilik kapal, dan praktisi keuangan maritim dala
    php artisan serve
    ```
 
-Akses aplikasi di: **http://localhost:8000**
+Akses aplikasi secara lokal di: **http://localhost:8000**
 
 ---
+
+💻 Dapatkan akses secara online di: **https://nawatax.vercel.app**

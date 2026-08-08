@@ -670,29 +670,51 @@
                             <svg :class="{'rotate-180': activeFaq === 1}" class="w-4 h-4 text-slate-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div x-show="activeFaq === 1" x-transition class="p-4 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/50">
-                            Dalam skema <strong>undisclosed principal</strong>, agen menagih nilai <strong>freight</strong> secara penuh (<strong>gross</strong>) kepada Shipper atas nama agen sendiri. Shipper akan memotong PPh (misal PPh 15) dari total nilai tagihan. Agen kemudian meneruskan pokok <strong>freight</strong> beserta bukti potong PPh porsi <strong>Shipowner</strong> kepada pemilik kapal.
+                            Dalam skema <strong>undisclosed principal</strong>, agen menagih nilai <strong>freight</strong> secara penuh (<strong>gross</strong>) kepada Shipper atas nama agen sendiri. Shipper memotong PPh (misal PPh 15) dari total tagihan. Agen lalu meneruskan pokok <strong>freight</strong> beserta bukti potong PPh porsi <strong>Shipowner</strong> kepada pemilik kapal.
                         </div>
                     </div>
 
                     <!-- FAQ Item 2 -->
                     <div class="bg-white rounded-xl border border-slate-200/80 overflow-hidden">
                         <button @click="activeFaq = (activeFaq === 2 ? 0 : 2)" type="button" class="w-full flex items-center justify-between p-4 text-left font-semibold text-sm text-slate-800 hover:bg-slate-50 transition-colors">
-                            <span>Kapan PPh Pasal 15 vs PPh Pasal 23 diterapkan?</span>
+                            <span>Bagaimana konsep alur pajak pada skema Pure Brokerage?</span>
                             <svg :class="{'rotate-180': activeFaq === 2}" class="w-4 h-4 text-slate-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div x-show="activeFaq === 2" x-transition class="p-4 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/50">
-                            PPh Pasal 15 (1.2% Final) dikenakan khusus atas penghasilan jasa pelayaran oleh perusahaan pelayaran nasional yang memiliki SIUPAL. Jika penyedia kapal tidak memiliki SIUPAL (sewa harta biasa), maka transaksi dikenakan PPh Pasal 23 (2%).
+                            Pada skema <strong>pure brokerage</strong>, tagihan utama (freight) bertransaksi langsung antara Shipper dan Shipowner. Agen hanya menerbitkan tagihan atas <strong>jasa perantara/komisi keagenan</strong> saja, sehingga potong/pungut pajak (PPh & PPN) yang dikelola agen terbatas pada nilai komisi bersihnya.
                         </div>
                     </div>
 
                     <!-- FAQ Item 3 -->
                     <div class="bg-white rounded-xl border border-slate-200/80 overflow-hidden">
                         <button @click="activeFaq = (activeFaq === 3 ? 0 : 3)" type="button" class="w-full flex items-center justify-between p-4 text-left font-semibold text-sm text-slate-800 hover:bg-slate-50 transition-colors">
-                            <span>Bagaimana perhitungan PPN selisih (Kurang Bayar) di Agen?</span>
+                            <span>Jenis-jenis pajak apa yang perlu diperhatikan?</span>
                             <svg :class="{'rotate-180': activeFaq === 3}" class="w-4 h-4 text-slate-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div x-show="activeFaq === 3" x-transition class="p-4 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/50">
-                            Agen memungut PPN Keluaran 11% dari Shipper atas total tagihan dan menerima PPN Masukan 11% dari tagihan Shipowner. Selisih antara PPN Keluaran dan PPN Masukan (yang secara efektif setara dengan 11% dari margin komisi bersih agen) disetorkan oleh Agen ke Kas Negara.
+                            Pajak utama meliputi: <strong>PPh Pasal 15</strong> (jasa pelayaran dalam negeri), <strong>PPh Pasal 23</strong> (jasa keagenan/sewa), <strong>PPh Pasal 26</strong> (transaksi dengan pelayaran luar negeri), serta <strong>PPN 11%</strong> atas penyerahan jasa keagenan atau selisih penagihan.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="bg-white rounded-xl border border-slate-200/80 overflow-hidden">
+                        <button @click="activeFaq = (activeFaq === 4 ? 0 : 4)" type="button" class="w-full flex items-center justify-between p-4 text-left font-semibold text-sm text-slate-800 hover:bg-slate-50 transition-colors">
+                            <span>Kapan PPh Pasal 15 vs PPh Pasal 23 diterapkan?</span>
+                            <svg :class="{'rotate-180': activeFaq === 4}" class="w-4 h-4 text-slate-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="activeFaq === 4" x-transition class="p-4 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/50">
+                            <strong>PPh Pasal 15</strong> (1.2% Final) dikenakan khusus atas penghasilan jasa pelayaran oleh perusahaan pelayaran nasional yang memiliki SIUPAL. Jika penyedia kapal tidak memiliki SIUPAL (sewa harta biasa/jasa agen), maka dikenakan <strong>PPh Pasal 23</strong> (2%).
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 5 -->
+                    <div class="bg-white rounded-xl border border-slate-200/80 overflow-hidden">
+                        <button @click="activeFaq = (activeFaq === 5 ? 0 : 5)" type="button" class="w-full flex items-center justify-between p-4 text-left font-semibold text-sm text-slate-800 hover:bg-slate-50 transition-colors">
+                            <span>Bagaimana perhitungan PPN selisih (Kurang Bayar) di Agen?</span>
+                            <svg :class="{'rotate-180': activeFaq === 5}" class="w-4 h-4 text-slate-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="activeFaq === 5" x-transition class="p-4 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/50">
+                            Agen memungut PPN Keluaran 11% dari Shipper atas total tagihan dan menerima PPN Masukan 11% dari tagihan Shipowner. Selisih antara PPN Keluaran dan PPN Masukan (setara 11% dari margin komisi bersih) disetorkan oleh Agen ke Kas Negara.
                         </div>
                     </div>
                 </div>
