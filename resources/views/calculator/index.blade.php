@@ -286,7 +286,10 @@
                                                 <div class="relative">
                                                     <input type="number" id="cargo_quantity" name="cargo_quantity" min="0" step="0.01" 
                                                         x-model="amounts.cargo_quantity" 
-                                                        class="w-full pr-16 px-3.5 py-2.5 bg-white border @error('cargo_quantity') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all" 
+                                                        :disabled="scheme === 'undisclosed' 
+                                                            ? (String(amounts.freight_owner).length > 0 || String(amounts.freight_shipper).length > 0)
+                                                            : String(amounts.freight_total).length > 0"
+                                                        class="w-full pr-16 px-3.5 py-2.5 bg-white border @error('cargo_quantity') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all disabled:bg-slate-100 disabled:text-slate-400" 
                                                         placeholder="1000 Ton">
                                                     <span class="pointer-events-none absolute inset-y-0 right-0 pr-4 flex items-center text-xs font-semibold text-slate-400">Ton</span>
                                                 </div>
@@ -574,8 +577,8 @@
                     <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex items-start space-x-4">
                         <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">1</div>
                         <div>
-                            <h3 class="text-sm font-bold text-slate-800">Tentukan Nilai Freight</h3>
-                            <p class="mt-1 text-xs text-slate-600 leading-relaxed">Masukkan <strong>freight dasar</strong> milik pemilik kapal (<strong>Shipowner</strong>) dan nilai jual yang kamu tawarkan ke pengirim barang (<strong>Shipper</strong>).</p>
+                            <h3 class="text-sm font-bold text-slate-800">Tentukan Skema & Nilai Freight</h3>
+                            <p class="mt-1 text-xs text-slate-600 leading-relaxed">Pilih <strong>skema keagenan</strong> dan masukkan <strong>freight dasar</strong> milik pemilik kapal (<strong>Shipowner</strong>) dan nilai jual yang kamu tawarkan ke pengirim barang (<strong>Shipper</strong>).</p>
                         </div>
                     </div>
 
