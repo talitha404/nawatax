@@ -61,10 +61,17 @@ class ProfitCalculatorService
     private function calculateFreight(array $data): array
     {
         if ($data['transaction_scheme'] === 'undisclosed') {
+            $ownerAmount = $data['freight_rate_owner'] !== null
+                ? $data['freight_rate_owner'] * $data['cargo_quantity']
+                : $data['freight_owner'];
+            $shipperAmount = $data['freight_rate_shipper'] !== null
+                ? $data['freight_rate_shipper'] * $data['cargo_quantity']
+                : $data['freight_shipper'];
+
             return [
-                'owner_amount' => $data['freight_owner'],
-                'shipper_amount' => $data['freight_shipper'],
-                'total_amount' => $data['freight_shipper'],
+                'owner_amount' => $ownerAmount,
+                'shipper_amount' => $shipperAmount,
+                'total_amount' => $shipperAmount,
             ];
         }
 
@@ -379,11 +386,10 @@ class ProfitCalculatorService
         }
 
         $isUndisclosed = $scheme === 'undisclosed';
-        $freightOwner = $isUndisclosed ? $this->amount($input, 'freight_owner') : 0.0;
-        $freightShipper = $isUndisclosed ? $this->amount($input, 'freight_shipper') : 0.0;
-        if ($isUndisclosed && $freightShipper < $freightOwner) {
-            throw new InvalidArgumentException('Freight shipper harus lebih besar atau sama dengan freight owner.');
-        }
+        $freightOwner = $isUndisclosed && $this->hasAmount($input, 'freight_owner') ? $this->amount($input, 'freight_owner') : null;
+        $freightShipper = $isUndisclosed && $this->hasAmount($input, 'freight_shipper') ? $this->amount($input, 'freight_shipper') : null;
+        $freightRateOwner = $isUndisclosed && $this->hasAmount($input, 'freight_rate_owner') ? $this->amount($input, 'freight_rate_owner') : null;
+        $freightRateShipper = $isUndisclosed && $this->hasAmount($input, 'freight_rate_shipper') ? $this->amount($input, 'freight_rate_shipper') : null;
 
         $freightTotal = array_key_exists('freight_total', $input) && $input['freight_total'] !== null && $input['freight_total'] !== ''
             ? $this->amount($input, 'freight_total')
@@ -394,6 +400,22 @@ class ProfitCalculatorService
         $cargoQuantity = array_key_exists('cargo_quantity', $input) && $input['cargo_quantity'] !== null && $input['cargo_quantity'] !== ''
             ? $this->amount($input, 'cargo_quantity')
             : null;
+        if ($isUndisclosed) {
+            $hasAmounts = $freightOwner !== null && $freightShipper !== null;
+            $hasRates = $freightRateOwner !== null && $freightRateShipper !== null && $cargoQuantity !== null;
+            if (! $hasAmounts && ! $hasRates) {
+                throw new InvalidArgumentException('Undisclosed Principal memerlukan freight nominal atau freight rate dan kuantitas kargo.');
+            }
+            if ($hasAmounts && ($freightRateOwner !== null || $freightRateShipper !== null || $cargoQuantity !== null)) {
+                throw new InvalidArgumentException('Gunakan salah satu metode input freight: nominal atau rate × kuantitas.');
+            }
+            if ($hasAmounts && $freightShipper < $freightOwner) {
+                throw new InvalidArgumentException('Freight shipper harus lebih besar atau sama dengan freight owner.');
+            }
+            if ($hasRates && $freightRateShipper < $freightRateOwner) {
+                throw new InvalidArgumentException('Freight rate ke shipper harus lebih besar atau sama dengan freight rate shipowner.');
+            }
+        }
         if (! $isUndisclosed && $freightTotal === null && ($freightRate === null || $cargoQuantity === null)) {
             throw new InvalidArgumentException('Pure Brokerage memerlukan freight_total atau freight_rate dan cargo_quantity.');
         }
@@ -439,8 +461,10 @@ class ProfitCalculatorService
 
         return [
             'transaction_scheme' => $scheme,
-            'freight_owner' => $freightOwner,
-            'freight_shipper' => $freightShipper,
+            'freight_owner' => $freightOwner ?? 0.0,
+            'freight_shipper' => $freightShipper ?? 0.0,
+            'freight_rate_owner' => $freightRateOwner,
+            'freight_rate_shipper' => $freightRateShipper,
             'freight_total' => $freightTotal,
             'freight_rate' => $freightRate ?? 0.0,
             'cargo_quantity' => $cargoQuantity ?? 0.0,
@@ -482,6 +506,12 @@ class ProfitCalculatorService
         }
 
         return (float) $value;
+    }
+
+    /** @param array<string, mixed> $input */
+    private function hasAmount(array $input, string $key): bool
+    {
+        return array_key_exists($key, $input) && $input[$key] !== null && $input[$key] !== '';
     }
 
     private function boolean(mixed $value): bool

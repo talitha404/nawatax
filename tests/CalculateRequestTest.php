@@ -47,6 +47,20 @@ class CalculateRequestTest extends TestCase
         $response->assertSessionDoesntHaveErrors();
     }
 
+    public function test_pure_brokerage_request_with_commission_percentage_is_valid(): void
+    {
+        $response = $this->postJson('/test-calculate', $this->validPayload([
+            'transaction_scheme' => 'pure_brokerage',
+            'freight_owner' => null,
+            'freight_shipper' => null,
+            'freight_total' => '1000000000',
+            'commission_percentage' => '2.5',
+        ]));
+
+        $response->assertOk();
+        $response->assertSessionDoesntHaveErrors();
+    }
+
     public function test_valid_request_with_percentage_split(): void
     {
         $response = $this->postJson('/test-calculate', $this->validPayload([

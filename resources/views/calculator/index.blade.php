@@ -4,7 +4,9 @@
     $result = $result ?? [
         'input' => [
             'transaction_scheme' => 'undisclosed', 'freight_owner' => '', 'freight_shipper' => '',
-            'reimbursable_costs' => '', 'shipowner_status' => 'siupal',
+            'freight_rate_owner' => '', 'freight_rate_shipper' => '',
+            'freight_total' => '', 'freight_rate' => '', 'cargo_quantity' => '', 'commission_percentage' => '',
+            'reimbursable_costs' => '', 'shipowner_status' => 'sewa_harta',
             'pkp_agen' => true, 'pkp_shipowner' => true, 'pkp_shipper' => true,
             'subbroker_split_active' => false, 'split_type' => 'percentage',
             'split_value' => '', 'sub_broker_entity' => 'corporate',
@@ -85,10 +87,15 @@
                         <form id="calculator-form" method="POST" action="{{ route('calculator.calculate') }}" class="space-y-6"
                             x-data="{
                                 amounts: {
-                                    freight_owner: @js(old('freight_owner', $result['input']['freight_owner'])),
-                                    freight_shipper: @js(old('freight_shipper', $result['input']['freight_shipper'])),
-                                    reimbursable_costs: @js(old('reimbursable_costs', $result['input']['reimbursable_costs'])),
-                                    split_value: @js(old('split_value', $result['input']['split_value'])),
+                                    freight_owner: @js(old('freight_owner', $result['input']['freight_owner'] ?? '')),
+                                    freight_shipper: @js(old('freight_shipper', $result['input']['freight_shipper'] ?? '')),
+                                    freight_rate_owner: @js(old('freight_rate_owner', $result['input']['freight_rate_owner'] ?? '')),
+                                    freight_rate_shipper: @js(old('freight_rate_shipper', $result['input']['freight_rate_shipper'] ?? '')),
+                                    freight_total: @js(old('freight_total', $result['input']['freight_total'] ?? '')),
+                                    freight_rate: @js(old('freight_rate', $result['input']['freight_rate'] ?? '')),
+                                    cargo_quantity: @js(old('cargo_quantity', $result['input']['cargo_quantity'] ?? '')),
+                                    reimbursable_costs: @js(old('reimbursable_costs', $result['input']['reimbursable_costs'] ?? '')),
+                                    split_value: @js(old('split_value', $result['input']['split_value'] ?? '')),
                                 },
                                 formatAmount(value) {
                                     const raw = String(value ?? '').replace(/\D/g, '');
@@ -98,56 +105,187 @@
                                     this.amounts[field] = event.target.value.replace(/\D/g, '');
                                     event.target.value = this.formatAmount(this.amounts[field]);
                                 },
+                                clearFields() {
+                                    this.amounts.freight_owner = '';
+                                    this.amounts.freight_shipper = '';
+                                    this.amounts.freight_rate_owner = '';
+                                    this.amounts.freight_rate_shipper = '';
+                                    this.amounts.freight_total = '';
+                                    this.amounts.freight_rate = '';
+                                    this.amounts.cargo_quantity = '';
+                                    this.amounts.reimbursable_costs = '';
+                                    this.amounts.split_value = '';
+                                },
+                                scheme: @js(old('transaction_scheme', $result['input']['transaction_scheme'] ?? 'undisclosed')),
                             }">
                             @csrf
 
                             <!-- CARD 1: Skema Transaksi & Nilai Freight -->
                             <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 transition-all hover:shadow-md">
-                                <div class="flex items-center space-x-3 border-b border-slate-100 pb-4 mb-5">
-                                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
-                                        1
+                                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
+                                            1
+                                        </div>
+                                        <div>
+                                            <h2 class="text-base font-bold text-slate-800">Transaksi & Skema Transaksi</h2>
+                                            <p class="text-xs text-slate-500">Nilai <strong>freight</strong> dan metode penagihan agen</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h2 class="text-base font-bold text-slate-800">Transaksi & Skema Transaksi</h2>
-                                        <p class="text-xs text-slate-500">Nilai <strong>freight</strong> dan metode penagihan agen</p>
-                                    </div>
+                                    <!-- Tombol Reset Nilai Freight -->
+                                    <button type="button" @click="clearFields()" class="text-xs font-semibold text-blue-600 hover:text-blue-800 underline transition-colors">
+                                        Reset Input
+                                    </button>
                                 </div>
 
                                 <div class="space-y-4">
                                     <!-- Skema Transaksi -->
                                     <div>
-                                        <label for="transaction_scheme" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                                            Skema Keagenan
+                                        <label for="transaction_scheme" class="flex items-center gap-1 text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                                            Skema Keagenan <span title="Undisclosed Principal: agen menagih freight gross dan meneruskannya ke Shipowner. Pure Brokerage: agen hanya menerima komisi; freight dibayar langsung antara Shipper dan Shipowner." class="cursor-help text-slate-400 normal-case" aria-label="Info skema keagenan">ⓘ</span>
                                         </label>
-                                        <select id="transaction_scheme" name="transaction_scheme" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                            <option value="undisclosed" @selected(old('transaction_scheme', $result['input']['transaction_scheme']) === 'undisclosed')>Undisclosed Principal (Freight Gross & Tax Pass-Through)</option>
+                                        <select id="transaction_scheme" name="transaction_scheme" x-model="scheme" @change="clearFields()" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                            <option value="undisclosed" @selected(old('transaction_scheme', $result['input']['transaction_scheme']) === 'undisclosed')>Undisclosed Principal / Back-to-Back</option>
+                                            <option value="pure_brokerage" @selected(old('transaction_scheme', $result['input']['transaction_scheme']) === 'pure_brokerage')>Pure Brokerage / Direct Agency</option>
                                         </select>
                                     </div>
 
-                                    <!-- Dual Input: Freight Owner vs Freight Shipper -->
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                                        <div>
-                                            <label for="freight_owner" class="block text-xs font-semibold text-slate-700 mb-1">
-                                                Freight Dasar Shipowner (IDR)
-                                            </label>
-                                            <div class="relative">
-                                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
-                                                <input type="hidden" name="freight_owner" :value="amounts.freight_owner">
-                                                <input type="text" id="freight_owner" inputmode="numeric" :value="formatAmount(amounts.freight_owner)" @input="updateAmount('freight_owner', $event)" class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_owner') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="100000000">
-                                            </div>
-                                            @error('freight_owner') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                                        </div>
+                                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                        <div class="space-y-6">
+                                            <!-- UNDISCLOSED PRINCIPAL -->
+                                            <template x-if="scheme === 'undisclosed'">
+                                                <div x-transition class="space-y-4">
+                                                    <div>
+                                                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-700">Input Undisclosed Principal</p>
+                                                        <p class="mt-1 text-[11px] text-slate-500">Masukkan freight shipowner dan shipper, atau hitung dari rate × quantity.</p>
+                                                    </div>
 
-                                        <div>
-                                            <label for="freight_shipper" class="block text-xs font-semibold text-slate-700 mb-1">
-                                                Harga Jual ke Shipper (IDR)
-                                            </label>
-                                            <div class="relative">
-                                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
-                                                <input type="hidden" name="freight_shipper" :value="amounts.freight_shipper">
-                                                <input type="text" id="freight_shipper" inputmode="numeric" :value="formatAmount(amounts.freight_shipper)" @input="updateAmount('freight_shipper', $event)" class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_shipper') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="110000000">
+                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label for="freight_owner" class="block text-xs font-semibold text-slate-700 mb-1">Freight Dasar Shipowner (IDR)</label>
+                                                            <div class="relative">
+                                                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
+                                                                <input type="hidden" name="freight_owner" :value="amounts.freight_owner">
+                                                                <input type="text" id="freight_owner" inputmode="numeric" 
+                                                                    :value="formatAmount(amounts.freight_owner)" 
+                                                                    @input="updateAmount('freight_owner', $event)" 
+                                                                    :disabled="String(amounts.freight_rate_owner).length > 0 || String(amounts.freight_rate_shipper).length > 0" 
+                                                                    class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_owner') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all disabled:bg-slate-100 disabled:text-slate-400" 
+                                                                    placeholder="100000000">
+                                                            </div>
+                                                            @error('freight_owner') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                                        </div>
+
+                                                        <div>
+                                                            <label for="freight_shipper" class="block text-xs font-semibold text-slate-700 mb-1">Harga Jual ke Shipper (IDR)</label>
+                                                            <div class="relative">
+                                                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
+                                                                <input type="hidden" name="freight_shipper" :value="amounts.freight_shipper">
+                                                                <input type="text" id="freight_shipper" inputmode="numeric" 
+                                                                    :value="formatAmount(amounts.freight_shipper)" 
+                                                                    @input="updateAmount('freight_shipper', $event)" 
+                                                                    :disabled="String(amounts.freight_rate_owner).length > 0 || String(amounts.freight_rate_shipper).length > 0" 
+                                                                    class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_shipper') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all disabled:bg-slate-100 disabled:text-slate-400" 
+                                                                    placeholder="110000000">
+                                                            </div>
+                                                            @error('freight_shipper') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label for="freight_rate_owner" class="block text-xs font-semibold text-slate-700 mb-1">Freight Rate Shipowner (IDR)</label>
+                                                            <div class="relative">
+                                                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
+                                                                <input type="hidden" name="freight_rate_owner" :value="amounts.freight_rate_owner">
+                                                                <input type="text" id="freight_rate_owner" inputmode="numeric" 
+                                                                    :value="formatAmount(amounts.freight_rate_owner)" 
+                                                                    @input="updateAmount('freight_rate_owner', $event)" 
+                                                                    :disabled="String(amounts.freight_owner).length > 0 || String(amounts.freight_shipper).length > 0" 
+                                                                    class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_rate_owner') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all disabled:bg-slate-100 disabled:text-slate-400" 
+                                                                    placeholder="1000000">
+                                                            </div>
+                                                            @error('freight_rate_owner') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                                        </div>
+
+                                                        <div>
+                                                            <label for="freight_rate_shipper" class="block text-xs font-semibold text-slate-700 mb-1">Freight Rate ke Shipper (IDR)</label>
+                                                            <div class="relative">
+                                                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
+                                                                <input type="hidden" name="freight_rate_shipper" :value="amounts.freight_rate_shipper">
+                                                                <input type="text" id="freight_rate_shipper" inputmode="numeric" 
+                                                                    :value="formatAmount(amounts.freight_rate_shipper)" 
+                                                                    @input="updateAmount('freight_rate_shipper', $event)" 
+                                                                    :disabled="String(amounts.freight_owner).length > 0 || String(amounts.freight_shipper).length > 0" 
+                                                                    class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_rate_shipper') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all disabled:bg-slate-100 disabled:text-slate-400" 
+                                                                    placeholder="1100000">
+                                                            </div>
+                                                            @error('freight_rate_shipper') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <!-- PURE BROKERAGE -->
+                                            <template x-if="scheme === 'pure_brokerage'">
+                                                <div x-transition class="space-y-4">
+                                                    <div>
+                                                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-700">Input Pure Brokerage</p>
+                                                        <p class="mt-1 text-[11px] text-slate-500">Isi total freight atau rate × quantity untuk menghitung komisi broker.</p>
+                                                    </div>
+
+                                                    <div>
+                                                        <label for="freight_total" class="block text-xs font-semibold text-slate-700 mb-1">Total Freight (IDR)</label>
+                                                        <div class="relative">
+                                                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
+                                                            <input type="hidden" name="freight_total" :value="amounts.freight_total">
+                                                            <input type="text" id="freight_total" inputmode="numeric" 
+                                                                :value="formatAmount(amounts.freight_total)" 
+                                                                @input="updateAmount('freight_total', $event)" 
+                                                                :disabled="String(amounts.freight_rate).length > 0" 
+                                                                class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_total') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all disabled:bg-slate-100 disabled:text-slate-400" 
+                                                                placeholder="1000000000">
+                                                        </div>
+                                                        @error('freight_total') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                                    </div>
+
+                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label for="freight_rate" class="block text-xs font-semibold text-slate-700 mb-1">Freight Rate (IDR)</label>
+                                                            <div class="relative">
+                                                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
+                                                                <input type="hidden" name="freight_rate" :value="amounts.freight_rate">
+                                                                <input type="text" id="freight_rate" inputmode="numeric" 
+                                                                    :value="formatAmount(amounts.freight_rate)" 
+                                                                    @input="updateAmount('freight_rate', $event)" 
+                                                                    :disabled="String(amounts.freight_total).length > 0" 
+                                                                    class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('freight_rate') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all disabled:bg-slate-100 disabled:text-slate-400" 
+                                                                    placeholder="1000000">
+                                                            </div>
+                                                            @error('freight_rate') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                                        </div>
+
+                                                        <div>
+                                                            <label for="commission_percentage" class="block text-xs font-semibold text-slate-700 mb-1">Persentase Komisi (%)</label>
+                                                            <input type="number" id="commission_percentage" name="commission_percentage" min="0" max="100" step="0.01" value="{{ old('commission_percentage', $result['input']['commission_percentage']) }}" class="w-full px-3.5 py-2.5 bg-white border @error('commission_percentage') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="2.5">
+                                                            @error('commission_percentage') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <!-- Kuantitas Kargo (Universal Input) -->
+                                            <div class="pt-2 border-t border-slate-200">
+                                                <label for="cargo_quantity" class="block text-xs font-semibold text-slate-700 mb-1">Kuantitas Kargo</label>
+                                                <div class="relative">
+                                                    <input type="number" id="cargo_quantity" name="cargo_quantity" min="0" step="0.01" 
+                                                        x-model="amounts.cargo_quantity" 
+                                                        class="w-full pr-16 px-3.5 py-2.5 bg-white border @error('cargo_quantity') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all" 
+                                                        placeholder="1000 Ton">
+                                                    <span class="pointer-events-none absolute inset-y-0 right-0 pr-4 flex items-center text-xs font-semibold text-slate-400">Ton</span>
+                                                </div>
+                                                @error('cargo_quantity') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                             </div>
-                                            @error('freight_shipper') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                         </div>
                                     </div>
 
@@ -159,7 +297,11 @@
                                         <div class="relative">
                                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-semibold text-slate-400">Rp</span>
                                             <input type="hidden" name="reimbursable_costs" :value="amounts.reimbursable_costs">
-                                            <input type="text" id="reimbursable_costs" inputmode="numeric" :value="formatAmount(amounts.reimbursable_costs)" @input="updateAmount('reimbursable_costs', $event)" class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('reimbursable_costs') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all" placeholder="0">
+                                            <input type="text" id="reimbursable_costs" inputmode="numeric" 
+                                                :value="formatAmount(amounts.reimbursable_costs)" 
+                                                @input="updateAmount('reimbursable_costs', $event)" 
+                                                class="w-full pl-9 pr-3.5 py-2.5 bg-white border @error('reimbursable_costs') border-red-500 @else border-slate-300 @enderror rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500 placeholder-slate-300 transition-all" 
+                                                placeholder="0">
                                         </div>
                                         @error('reimbursable_costs') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                     </div>
@@ -277,7 +419,7 @@
                     </div>
 
 
-                    <!-- KOLOM KANAN: Live Result Panel / Sticky Dashboard (lg:col-span-5) -->
+                    <!-- KOLOM KANAN: Result Panel / Sticky Dashboard (lg:col-span-5) -->
                     <div class="lg:col-span-5 lg:sticky lg:top-20 space-y-4">
                         @php
                             $pdfPayload = [
@@ -452,7 +594,7 @@
                         <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">4</div>
                         <div>
                             <h3 class="text-sm font-bold text-slate-800">Analisis Hasil & Unduh PDF</h3>
-                            <p class="mt-1 text-xs text-slate-600 leading-relaxed">Sistem akan secara langsung memperbarui ringkasan <strong>Net Profit After Tax</strong> dan rincian setoran PPN untuk kamu cetak.</p>
+                            <p class="mt-1 text-xs text-slate-600 leading-relaxed">Klik tombol "Hitung Profit" untuk menghasilkan ringkasan <strong>Net Profit After Tax</strong> dan rincian setoran PPN untuk kamu cetak.</p>
                         </div>
                     </div>
                 </div>
@@ -509,7 +651,7 @@
     <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 text-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
             <p class="font-semibold text-slate-300">NawaTax — Shipbroker Profit & Tax Calculator</p>
-            <p>&copy; {{ date('Y') }} NawaTax. Designed for Indonesian Maritime & Logistics Industry.</p>
+            <p>&copy; {{ date('Y') }} NawaTax. Designed for Indonesian Maritime & Logistics Industry. Developed by Talitha Nabila C.</p>
         </div>
     </footer>
 
