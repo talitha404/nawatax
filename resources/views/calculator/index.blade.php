@@ -41,21 +41,66 @@
 <body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-blue-500 selection:text-white">
 
     <!-- 1. Navigasi Sticky -->
-    <nav class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100">
+    <nav x-data="{ open: false }" class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
+                <!-- Logo & Brand -->
                 <div class="flex items-center space-x-2">
                     <img src="{{ asset('nawatax.png') }}" alt="NawaTax Logo" class="h-8 w-auto">
                     <span class="text-xl font-extrabold bg-gradient-to-r from-blue-700 to-indigo-800 bg-clip-text text-transparent">
                         NawaTax
                     </span>
                 </div>
+
+                <!-- Menu Desktop -->
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="#calculator" class="text-slate-600 hover:text-blue-600 text-sm font-semibold transition-colors">Kalkulator</a>
                     <a href="#how-to-use" class="text-slate-600 hover:text-blue-600 text-sm font-semibold transition-colors">Cara Pakai</a>
                     <a href="#faq" class="text-slate-600 hover:text-blue-600 text-sm font-semibold transition-colors">FAQ</a>
                 </div>
+
+                <!-- Tombol Hamburger Mobile -->
+                <div class="flex md:hidden items-center">
+                    <button @click="open = !open" 
+                            type="button" 
+                            class="p-2 rounded-lg text-slate-600 hover:text-blue-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                            aria-label="Toggle Menu">
+                        
+                        <!-- Ikon Hamburger (saat ditutup) -->
+                        <svg x-show="!open" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+
+                        <!-- Ikon Silang / Close (saat dibuka) -->
+                        <svg x-show="open" x-cloak class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
+        </div>
+
+        <!-- Dropdown Menu Mobile -->
+        <div x-show="open" 
+            @click.away="open = false"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-2"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-2"
+            x-cloak
+            class="md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-2 shadow-lg">
+            
+            <a href="#calculator" @click="open = false" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                Kalkulator
+            </a>
+            <a href="#how-to-use" @click="open = false" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                Cara Pakai
+            </a>
+            <a href="#faq" @click="open = false" class="block px-3 py-2 rounded-lg text-base font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                FAQ
+            </a>
         </div>
     </nav>
 
