@@ -198,7 +198,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-200">
                                                         <div>
                                                             <label for="freight_rate_owner" class="block text-xs font-semibold text-slate-700 mb-1">Freight Rate Shipowner (IDR)</label>
                                                             <div class="relative">
@@ -255,7 +255,7 @@
                                                         @error('freight_total') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                                     </div>
 
-                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-200">
                                                         <div>
                                                             <label for="freight_rate" class="block text-xs font-semibold text-slate-700 mb-1">Freight Rate (IDR)</label>
                                                             <div class="relative">
@@ -281,7 +281,7 @@
                                             </template>
 
                                             <!-- Kuantitas Kargo (Universal Input) -->
-                                            <div class="pt-2 border-t border-slate-200">
+                                            <div>
                                                 <label for="cargo_quantity" class="block text-xs font-semibold text-slate-700 mb-1">Kuantitas Kargo</label>
                                                 <div class="relative">
                                                     <input type="number" id="cargo_quantity" name="cargo_quantity" min="0" step="0.01" 
@@ -423,7 +423,6 @@
                             </button>
                         </form>
                     </div>
-
 
                     <!-- KOLOM KANAN: Result Panel / Sticky Dashboard (lg:col-span-5) -->
                     <div class="lg:col-span-5 lg:sticky lg:top-20 space-y-4">
