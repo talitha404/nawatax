@@ -133,8 +133,14 @@
                                         </div>
                                     </div>
                                     <!-- Tombol Reset Nilai Freight -->
-                                    <a href="{{ route('calculator.index') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800 underline transition-colors">
-                                        Reset Input & Hasil
+                                    <a href="{{ route('calculator.index') }}" 
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700 active:bg-red-200 border border-red-200/60 transition-all duration-200 shadow-sm"
+                                    title="Reset Form & Hasil">
+                                        <!-- Ikon Sampah (Trash Icon) -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                        <span>Reset Input & Hasil</span>
                                     </a>
                                 </div>
 
@@ -157,7 +163,7 @@
                                                 <div x-transition class="space-y-4">
                                                     <div>
                                                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-700">Input Undisclosed Principal</p>
-                                                        <p class="mt-1 text-[11px] text-slate-500">Masukkan freight shipowner dan shipper, atau hitung dari rate × quantity.</p>
+                                                        <p class="mt-1 text-[11px] text-slate-500">Masukkan <strong>freight shipowner dan shipper</strong> atau hitung dari <strong>rate × quantity</strong>.</p>
                                                     </div>
 
                                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -231,7 +237,7 @@
                                                 <div x-transition class="space-y-4">
                                                     <div>
                                                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-700">Input Pure Brokerage</p>
-                                                        <p class="mt-1 text-[11px] text-slate-500">Isi total freight atau rate × quantity untuk menghitung komisi broker.</p>
+                                                        <p class="mt-1 text-[11px] text-slate-500">Isi <strong>total freight</strong> atau <strong>rate × quantity</strong> untuk menghitung komisi broker.</p>
                                                     </div>
 
                                                     <div>
