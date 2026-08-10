@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = [
+  "php",
+  "phpPackages.gd",
+  "phpPackages.mbstring",
+  "phpPackages.dom",
+  "phpPackages.fileinfo"
+]
