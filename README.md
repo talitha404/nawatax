@@ -5,6 +5,13 @@ Dibangun dengan stack modern **Laravel**, **Blade**, dan **Alpine.js**, NawaTax 
 
 ---
 
+### 🌐 Live Demo
+[![Website](https://img.shields.io/badge/Akses_Aplikasi-Online-success?style=for-the-badge&logo=railway)](https://nawatax-production.up.railway.app/)
+
+📌 **URL:** [nawatax-production.up.railway.app](https://nawatax-production.up.railway.app/)
+
+---
+
 ## 🌟 Nilai Unik Produk
 Perhitungan pajak *freight* dan *charter* kapal di Indonesia memiliki aturan yang kompleks.  
 NawaTax hadir untuk:
@@ -88,4 +95,13 @@ NawaTax membantu *shipbroker*, pemilik kapal, dan praktisi keuangan maritim dala
 Akses aplikasi secara lokal di: **http://localhost:8000**
 
 ---
-Akses aplikasi secara online di: **https://nawatax-production.up.railway.app/**
+
+## 🐞 Bug
+ - Gagal generate pdf
+
+---
+
+## 💻 Pengembangan Untuk Kedepannya
+ - Tambah jumlah broker
+ - Tambah jenis fee broker
+ - Tambah jenis jumlah muatan (bukan hanya ton)
