@@ -22,10 +22,9 @@ export async function exportPdf(payload, endpoint = '/generate-pdf') {
 
         try {
             const error = await response.json();
+            console.error('PDF ERROR:', error);
             message = error.message || message;
-        } catch (_) {
-            // Keep the user-facing fallback when the response is not JSON.
-        }
+        } catch (_) {}
 
         throw new Error(message);
     }
